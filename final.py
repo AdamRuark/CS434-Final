@@ -57,11 +57,11 @@ def decision_tree(data, k):
     idx = np.random.randint(data.shape[0], size=int(len(data)/10))
     validation = data[idx,:]
     data = np.delete(data, idx, axis=0)
-    X_valid, Y_valid = validation[:,:102], validation[:,103]
+    X_valid, Y_valid, ids_valid = validation[:,:102], validation[:,103], validation[:,104]
     bag_models = []
 
     # Train 10 models
-    for i in range(1):
+    for i in range(100):
         bag_data = data[np.random.choice(data.shape[0], size=len(data), replace=True)]
         X_train, Y_train = bag_data[:,:102], bag_data[:,103]
 
@@ -78,6 +78,8 @@ def decision_tree(data, k):
     
     predictions = predictions / float(len(bag_models))
 
+    out_pred(predictions,ids_valid,Y_valid)
+
     for i, val in enumerate(predictions):
         predictions[i] = 0 if val < 0.5 else 1
 
@@ -88,7 +90,17 @@ def decision_tree(data, k):
 
     return predictions
 
-        
+    
+def out_pred(predictions,ids,y):
+    f = open("valid_pred.txt",'w+')
+    t = open('valid_true.txt','w+')
+    for i, pred in enumerate(predictions):
+        f.write(ids[i] + ',' + str(pred) + '\n')
+        t.write(ids[i] + ',' + str(y[i]) + '\n')
+    f.close()
+    t.close()
+
+
 def load_features(file_name, data_length):
     classes, ids = [], []
     f = open(file_name, 'r')
