@@ -98,7 +98,7 @@ def main():
     print(model.summary())
     max_acc = 0
     curr_acc = 0
-    for epoch in range(1,101):
+    for epoch in range(1,1001):
         print(f'Epoch: {epoch}')
         for i in range(100):            
             print('example: ' + str(i) + '\n')
@@ -108,8 +108,6 @@ def main():
             # print("Accuracy: %.2f%%" % (scores[1]*100))
         guesses = []
         for i, row in enumerate(valid):
-            if i > 5:
-                break
             guesses.append(model.predict(np.array([row]),batch_size=1)[0])
         curr_acc = acc(guesses,y_valid)
         print(f'Curr Acc: {curr_acc}')
@@ -121,7 +119,6 @@ def main():
             with open("model1.json", "w+") as json_file:
                 json_file.write(model_json)
             model.save_weights("model1.h5")
-        break
 
     return
 
@@ -141,10 +138,7 @@ def generator(data, y):
 def acc(guess, y):
     corr = 0
     for i,g in enumerate(guess):
-        print(g[0])
-        print(y[i])
         temp = 1 if g[0] > 0.5 else 0
-        print(temp)
         if temp == y[i]:
             corr += 1
     return corr/len(guess)
